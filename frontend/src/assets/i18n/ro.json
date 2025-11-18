@@ -1,0 +1,58 @@
+{
+  "header": {
+    "logo": "Paradisul DJilor",
+    "nav": {
+      "about": "Despre",
+      "pricing": "Prețuri",
+      "contact": "Contact"
+    },
+    "login": "Autentificare",
+    "register": "Înregistrare"
+  },
+  "landing": {
+    "hero": {
+      "title": "Bun venit la Paradisul DJilor",
+      "subtitle": "Platforma care facilitează comunicarea între DJ-i și clienții lor",
+      "ctaPrimary": "Începe acum",
+      "ctaSecondary": "Află mai multe"
+    },
+    "features": {
+      "title": "Funcționalități",
+      "professionalProfile": {
+        "title": "Gestionare profil profesional",
+        "description": "Creează și gestionează profilul tău profesional de DJ"
+      },
+      "clientsDashboard": {
+        "title": "Tabel cu clienți",
+        "description": "Gestionează toți clienții într-un singur loc"
+      },
+      "monthlySubscription": {
+        "title": "Abonament lunar",
+        "description": "Planuri flexibile de abonament lunar"
+      },
+      "stripePayment": {
+        "title": "Suport pentru plăți Stripe",
+        "description": "Procesare sigură a plăților cu Stripe"
+      }
+    },
+    "pricing": {
+      "title": "Prețuri",
+      "monthly": "Abonament lunar",
+      "currency": "RON",
+      "subscribe": "Abonează-te"
+    },
+    "cta": {
+      "title": "Alătură-te acum",
+      "description": "Această aplicație va facilita comunicarea între DJ și clienții DJ-ului."
+    },
+    "footer": {
+      "terms": "Termeni și condiții",
+      "privacy": "Politica de confidențialitate",
+      "contact": "Contact"
+    }
+  },
+  "common": {
+    "language": "Limbă"
+  }
+}
+

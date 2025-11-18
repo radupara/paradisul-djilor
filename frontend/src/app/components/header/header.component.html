@@ -1,0 +1,22 @@
+<header class="header">
+  <div class="header-container">
+    <div class="logo">
+      <h1>{{ 'header.logo' | translate }}</h1>
+    </div>
+    
+    <nav class="nav-menu">
+      <a href="#about" class="nav-link">{{ 'header.nav.about' | translate }}</a>
+      <a href="#pricing" class="nav-link">{{ 'header.nav.pricing' | translate }}</a>
+      <a href="#contact" class="nav-link">{{ 'header.nav.contact' | translate }}</a>
+    </nav>
+    
+    <div class="header-actions">
+      <button class="language-toggle" (click)="toggleLanguage()" [attr.aria-label]="'common.language' | translate">
+        {{ getLanguageLabel() }}
+      </button>
+      <button class="btn btn-secondary">{{ 'header.login' | translate }}</button>
+      <button class="btn btn-primary">{{ 'header.register' | translate }}</button>
+    </div>
+  </div>
+</header>
+

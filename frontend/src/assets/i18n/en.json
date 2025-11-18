@@ -1,0 +1,58 @@
+{
+  "header": {
+    "logo": "DJ's Paradise",
+    "nav": {
+      "about": "About",
+      "pricing": "Pricing",
+      "contact": "Contact"
+    },
+    "login": "Login",
+    "register": "Register"
+  },
+  "landing": {
+    "hero": {
+      "title": "Welcome to DJ's Paradise",
+      "subtitle": "The platform that facilitates communication between DJs and their clients",
+      "ctaPrimary": "Start Now",
+      "ctaSecondary": "Learn More"
+    },
+    "features": {
+      "title": "Features",
+      "professionalProfile": {
+        "title": "Professional Profile Management",
+        "description": "Create and manage your professional DJ profile"
+      },
+      "clientsDashboard": {
+        "title": "Clients Dashboard",
+        "description": "Manage all your clients in one place"
+      },
+      "monthlySubscription": {
+        "title": "Monthly Subscription",
+        "description": "Flexible monthly subscription plans"
+      },
+      "stripePayment": {
+        "title": "Stripe Payment Support",
+        "description": "Secure payment processing with Stripe"
+      }
+    },
+    "pricing": {
+      "title": "Pricing",
+      "monthly": "Monthly Subscription",
+      "currency": "RON",
+      "subscribe": "Subscribe"
+    },
+    "cta": {
+      "title": "Join Now",
+      "description": "This app will facilitate communication between the DJ and the DJ's clients."
+    },
+    "footer": {
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "contact": "Contact"
+    }
+  },
+  "common": {
+    "language": "Language"
+  }
+}
+
