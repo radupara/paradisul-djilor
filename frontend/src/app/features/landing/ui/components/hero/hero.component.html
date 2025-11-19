@@ -1,23 +1,27 @@
 <div class="hero-section">
+  <app-hero-background></app-hero-background>
   <div class="hero-overlay"></div>
 
-  <div class="hero-content">
-    <app-blur-text
-      [text]="'landing.hero.title' | translate"
-      className="hero-title"
-      [delay]="150"
-      [stepDuration]="0.3">
-    </app-blur-text>
+  <div class="hero-container">
+    <!-- Left Side: Text -->
+    <div class="hero-text-content">
+      <div class="hero-title-container">
+        <app-blur-text [text]="'landing.hero.title' | translate" className="hero-title" [delay]="100" [duration]="1000">
+        </app-blur-text>
+      </div>
 
-    <div class="subtitle-container">
-      <app-blur-text
-        *ngIf="currentSubtitle"
-        [text]="currentSubtitle"
-        className="hero-subtitle"
-        [delay]="100"
-        [stepDuration]="0.25">
-      </app-blur-text>
+      <div class="subtitle-container">
+        <app-blur-text *ngIf="currentSubtitle" [text]="currentSubtitle" className="hero-subtitle" [delay]="50"
+          [duration]="800">
+        </app-blur-text>
+      </div>
     </div>
 
+    <!-- Right Side: Logo/Image -->
+    <div class="hero-image-content">
+      <div class="logo-card">
+        <img src="assets/images/hero-logo.png" alt="DJ Paradise" class="hero-logo">
+      </div>
+    </div>
   </div>
 </div>
