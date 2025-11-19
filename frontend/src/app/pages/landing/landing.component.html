@@ -1,11 +1,14 @@
 <div class="landing-container">
   <main class="landing-content">
     <section class="hero-section">
-      <h1 class="hero-title">{{ 'landing.hero.title' | translate }}</h1>
-      <p class="hero-subtitle">{{ 'landing.hero.subtitle' | translate }}</p>
-      <div class="hero-actions">
-        <button class="btn btn-primary">{{ 'landing.hero.ctaPrimary' | translate }}</button>
-        <button class="btn btn-secondary">{{ 'landing.hero.ctaSecondary' | translate }}</button>
+      <app-hero-background></app-hero-background>
+      <div class="hero-content">
+        <h1 class="hero-title">{{ 'landing.hero.title' | translate }}</h1>
+        <p class="hero-subtitle">{{ 'landing.hero.subtitle' | translate }}</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary">{{ 'landing.hero.ctaPrimary' | translate }}</button>
+          <button class="btn btn-secondary">{{ 'landing.hero.ctaSecondary' | translate }}</button>
+        </div>
       </div>
     </section>
 
@@ -54,4 +57,3 @@
     </div>
   </footer>
 </div>
-
