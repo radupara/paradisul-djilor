@@ -1,2 +1,2 @@
 export * from './components/header/header.component';
-export * from './directives/blur-text.directive';
+export * from './components/blur-text/blur-text.component';
