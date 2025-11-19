@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BlurTextComponent } from '../../../../../shared/ui/components/blur-text/blur-text.component';
@@ -13,6 +13,8 @@ import { takeUntil } from 'rxjs/operators';
   styleUrl: './hero.component.scss'
 })
 export class HeroComponent implements OnInit, OnDestroy {
+  @ViewChild('heroVideo') heroVideo!: ElementRef<HTMLVideoElement>;
+
   currentSubtitleIndex: number = 0;
   subtitles: string[] = [];
   currentSubtitle: string = '';
@@ -23,11 +25,28 @@ export class HeroComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadSubtitles();
+    this.ensureVideoPlayback();
 
     // Reload subtitles when language changes
     this.translateService.onLangChange.subscribe(() => {
       this.loadSubtitles();
     });
+  }
+
+  private ensureVideoPlayback(): void {
+    // Ensure video starts playing after a short delay
+    setTimeout(() => {
+      if (this.heroVideo && this.heroVideo.nativeElement) {
+        const video = this.heroVideo.nativeElement;
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            // Autoplay was prevented, user interaction may be needed
+            console.log('Video autoplay prevented');
+          });
+        }
+      }
+    }, 500);
   }
 
   private loadSubtitles(): void {
