@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { BlurTextDirective } from '../../../../../shared/ui/directives/blur-text.directive';
+import { BlurTextComponent } from '../../../../../shared/ui/components/blur-text/blur-text.component';
 import { Subject, interval } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, TranslateModule, BlurTextDirective],
+  imports: [CommonModule, TranslateModule, BlurTextComponent],
   templateUrl: './hero.component.html',
   styleUrl: './hero.component.scss'
 })
@@ -23,8 +23,7 @@ export class HeroComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadSubtitles();
-    this.startSubtitleRotation();
-    
+
     // Reload subtitles when language changes
     this.translateService.onLangChange.subscribe(() => {
       this.loadSubtitles();
@@ -32,14 +31,20 @@ export class HeroComponent implements OnInit, OnDestroy {
   }
 
   private loadSubtitles(): void {
-    this.translateService.get('landing.hero.subtitles').subscribe((subtitles: string[]) => {
-      this.subtitles = subtitles;
-      this.currentSubtitleIndex = 0;
-      this.currentSubtitle = this.subtitles[0];
+    this.translateService.get('landing.hero.subtitles').subscribe((subtitles: any) => {
+      if (Array.isArray(subtitles)) {
+        this.subtitles = subtitles;
+        this.currentSubtitleIndex = 0;
+        this.currentSubtitle = this.subtitles[0];
+        this.startSubtitleRotation();
+      }
     });
   }
 
   private startSubtitleRotation(): void {
+    // Clear previous subscription
+    this.destroy$.next();
+
     interval(this.rotationInterval)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
