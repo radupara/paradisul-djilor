@@ -34,19 +34,35 @@ export class HeroComponent implements OnInit, OnDestroy {
   }
 
   private ensureVideoPlayback(): void {
-    // Ensure video starts playing after a short delay
-    setTimeout(() => {
-      if (this.heroVideo && this.heroVideo.nativeElement) {
-        const video = this.heroVideo.nativeElement;
+    if (this.heroVideo && this.heroVideo.nativeElement) {
+      const video = this.heroVideo.nativeElement;
+
+      // Wait for video metadata to be loaded
+      const playVideo = () => {
         const playPromise = video.play();
         if (playPromise !== undefined) {
-          playPromise.catch(() => {
-            // Autoplay was prevented, user interaction may be needed
-            console.log('Video autoplay prevented');
-          });
+          playPromise
+            .then(() => {
+              // Video is playing
+            })
+            .catch((error) => {
+              // Autoplay prevented - add click handler for user interaction
+              console.log('Video autoplay prevented. Click anywhere to play.');
+              document.addEventListener('click', () => {
+                video.play().catch(err => console.log('Play error:', err));
+              }, { once: true });
+            });
         }
+      };
+
+      if (video.readyState >= 2) {
+        // Video metadata is already loaded
+        playVideo();
+      } else {
+        // Wait for metadata to load
+        video.addEventListener('loadedmetadata', playVideo, { once: true });
       }
-    }, 500);
+    }
   }
 
   private loadSubtitles(): void {
