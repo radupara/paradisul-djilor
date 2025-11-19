@@ -45,9 +45,17 @@
 
   .nav-link {
     text-decoration: none;
-    color: #333;
+    color: white;
     font-weight: 500;
     transition: color 0.3s ease;
+
+    &:hover {
+      color: #f0f0f0;
+    }
+  }
+
+  .header-white & .nav-link {
+    color: #333;
 
     &:hover {
       color: #667eea;
