@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BlurTextComponent } from '../../../../../shared/ui/components/blur-text/blur-text.component';
@@ -13,8 +13,6 @@ import { takeUntil } from 'rxjs/operators';
   styleUrl: './hero.component.scss'
 })
 export class HeroComponent implements OnInit, OnDestroy {
-  @ViewChild('heroVideo') heroVideo!: ElementRef<HTMLVideoElement>;
-
   currentSubtitleIndex: number = 0;
   subtitles: string[] = [];
   currentSubtitle: string = '';
@@ -25,44 +23,11 @@ export class HeroComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadSubtitles();
-    this.ensureVideoPlayback();
 
     // Reload subtitles when language changes
     this.translateService.onLangChange.subscribe(() => {
       this.loadSubtitles();
     });
-  }
-
-  private ensureVideoPlayback(): void {
-    if (this.heroVideo && this.heroVideo.nativeElement) {
-      const video = this.heroVideo.nativeElement;
-
-      // Wait for video metadata to be loaded
-      const playVideo = () => {
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              // Video is playing
-            })
-            .catch((error) => {
-              // Autoplay prevented - add click handler for user interaction
-              console.log('Video autoplay prevented. Click anywhere to play.');
-              document.addEventListener('click', () => {
-                video.play().catch(err => console.log('Play error:', err));
-              }, { once: true });
-            });
-        }
-      };
-
-      if (video.readyState >= 2) {
-        // Video metadata is already loaded
-        playVideo();
-      } else {
-        // Wait for metadata to load
-        video.addEventListener('loadedmetadata', playVideo, { once: true });
-      }
-    }
   }
 
   private loadSubtitles(): void {
