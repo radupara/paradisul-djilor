@@ -11,20 +11,22 @@
   <div class="hero-overlay"></div>
 
   <div class="hero-content">
-    <h1 class="hero-title" appBlurText [delay]="0" [duration]="0.8">
-      {{ 'landing.hero.title' | translate }}
-    </h1>
+    <app-blur-text
+      [text]="'landing.hero.title' | translate"
+      className="hero-title"
+      [delay]="150"
+      [stepDuration]="0.3">
+    </app-blur-text>
 
     <div class="subtitle-container">
-      <p 
-        *ngIf="currentSubtitle" 
-        class="hero-subtitle" 
+      <app-blur-text
+        *ngIf="currentSubtitle"
+        [text]="currentSubtitle"
+        className="hero-subtitle"
         [key]="currentSubtitleIndex"
-        appBlurText 
-        [delay]="0" 
-        [duration]="0.6">
-        {{ currentSubtitle }}
-      </p>
+        [delay]="100"
+        [stepDuration]="0.25">
+      </app-blur-text>
     </div>
 
     <div class="hero-actions">
