@@ -1,0 +1,35 @@
+<div class="hero-section">
+  <video 
+    class="hero-video" 
+    autoplay 
+    muted 
+    loop 
+    playsinline>
+    <source src="https://cdn.builder.io/o/assets%2F0b5978dfa13741faa6a52fed10ed5ab0%2F3b63e54bfc104928b14a67830ab04c01?alt=media&token=a6dd8e2f-753a-4046-bd47-29a172c23854&apiKey=0b5978dfa13741faa6a52fed10ed5ab0" type="video/mp4">
+  </video>
+
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <h1 class="hero-title" appBlurText [delay]="0" [duration]="0.8">
+      {{ 'landing.hero.title' | translate }}
+    </h1>
+
+    <div class="subtitle-container">
+      <p 
+        *ngIf="currentSubtitle" 
+        class="hero-subtitle" 
+        [key]="currentSubtitleIndex"
+        appBlurText 
+        [delay]="0" 
+        [duration]="0.6">
+        {{ currentSubtitle }}
+      </p>
+    </div>
+
+    <div class="hero-actions">
+      <button class="btn btn-primary">{{ 'landing.hero.ctaPrimary' | translate }}</button>
+      <button class="btn btn-secondary">{{ 'landing.hero.ctaSecondary' | translate }}</button>
+    </div>
+  </div>
+</div>
