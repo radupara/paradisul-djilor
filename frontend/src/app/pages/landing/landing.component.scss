@@ -200,7 +200,11 @@
 
 @media (max-width: 768px) {
   .hero-section {
-    padding: 2rem 1rem;
+    min-height: 400px;
+
+    .hero-content {
+      padding: 2rem 1rem;
+    }
 
     .hero-title {
       font-size: 2rem;
