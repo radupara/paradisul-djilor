@@ -1,0 +1,23 @@
+<div class="hero-section">
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <app-blur-text
+      [text]="'landing.hero.title' | translate"
+      className="hero-title"
+      [delay]="150"
+      [stepDuration]="0.3">
+    </app-blur-text>
+
+    <div class="subtitle-container">
+      <app-blur-text
+        *ngIf="currentSubtitle"
+        [text]="currentSubtitle"
+        className="hero-subtitle"
+        [delay]="100"
+        [stepDuration]="0.25">
+      </app-blur-text>
+    </div>
+
+  </div>
+</div>

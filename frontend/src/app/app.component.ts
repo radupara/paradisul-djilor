@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HeaderComponent } from './components/header/header.component';
+import { HeaderComponent } from './shared/ui/components/header/header.component';
 
 @Component({
   selector: 'app-root',
@@ -12,4 +12,3 @@ import { HeaderComponent } from './components/header/header.component';
 export class AppComponent {
   title = 'Paradisul DJilor';
 }
-

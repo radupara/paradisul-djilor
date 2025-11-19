@@ -12,7 +12,20 @@
   "landing": {
     "hero": {
       "title": "Welcome to DJ's Paradise",
-      "subtitle": "The platform that facilitates communication between DJs and their clients",
+      "subtitles": [
+        "Never Miss a Client Detail Again",
+        "Spend Less Time Organizing. More Time Performing.",
+        "One Platform. All Your Client Needs.",
+        "Turn Client Chaos Into Event Gold",
+        "Your Clients Organized. Your Events Flawless.",
+        "Your Complete DJ Year: Tracked, Organized, Optimized",
+        "Stop Chasing Clients for Information",
+        "Automate Reminders. Book More Events.",
+        "Client Details at Your Fingertips. Always.",
+        "Event Details, Timeline, Reminders—All Synced",
+        "Get Paid Faster. Organize Smarter.",
+        "The Command Center Every DJ Needs"
+      ],
       "ctaPrimary": "Start Now",
       "ctaSecondary": "Learn More"
     },

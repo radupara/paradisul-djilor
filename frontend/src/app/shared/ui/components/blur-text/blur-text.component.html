@@ -1,0 +1,8 @@
+<p #blurTextRef [class]="className" style="display: flex; flex-wrap: wrap; margin: 0;">
+  <span 
+    *ngFor="let word of words"
+    [ngStyle]="word.style"
+    style="display: inline-block; will-change: filter, opacity;">
+    {{ word.text }}<span *ngIf="word.index < words.length - 1">&nbsp;</span>
+  </span>
+</p>
