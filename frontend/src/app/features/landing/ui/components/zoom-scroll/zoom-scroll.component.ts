@@ -105,44 +105,13 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private loadAndDrawFrame(frameNum: number): void {
-    const validFrameNum = Math.max(1, Math.min(frameNum, this.totalFrames));
-
-    // If cached, draw immediately
-    if (this.imageCache.has(validFrameNum)) {
-      const img = this.imageCache.get(validFrameNum);
-      if (img) {
-        this.drawFrame(img);
-      }
-      return;
-    }
-
-    // Load frame asynchronously
-    const img = new Image();
-    const url = this.getImageUrl(validFrameNum);
-    img.src = url;
-    img.onload = () => {
-      this.imageCache.set(validFrameNum, img);
-      if (this.currentFrameIndex === validFrameNum) {
-        this.drawFrame(img);
-      }
-    };
-    img.onerror = () => {
-      console.error(`Failed to load frame ${validFrameNum}`);
-    };
-  }
-
-  private drawFrame(frameOrNum: HTMLImageElement | number): void {
+  private drawFrame(frameNum: number): void {
     if (!this.ctx || !this.canvasRef) return;
 
+    const validFrameNum = Math.max(1, Math.min(frameNum, this.totalFrames));
     const canvas = this.canvasRef.nativeElement;
-    let img: HTMLImageElement | null = null;
 
-    if (typeof frameOrNum === 'number') {
-      img = this.imageCache.get(frameOrNum) || null;
-    } else {
-      img = frameOrNum;
-    }
+    const img = this.imageCache.get(validFrameNum);
 
     if (!img || !img.complete || img.naturalWidth === 0) {
       // If image not ready, draw placeholder
