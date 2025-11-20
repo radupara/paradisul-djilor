@@ -68,32 +68,27 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isAnimating = true;
     this.originalScrollBehavior = document.documentElement.style.scrollBehavior;
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: this.zoomScrollSection.nativeElement,
-        start: 'top center',
-        end: 'bottom center',
-        scrub: 0.5,
-        onEnter: () => this.disableScroll(),
-        onLeaveBack: () => this.enableScroll(),
-        onUpdate: (self) => {
-          const progress = self.progress;
-          const frameNum = Math.round(progress * (this.totalFrames - 1)) + 1;
-          this.loadFrame(frameNum);
-        }
-      }
-    });
+    this.scrollTrigger = ScrollTrigger.create({
+      trigger: this.zoomScrollSection.nativeElement,
+      start: 'top top',
+      end: 'bottom bottom',
+      pin: false,
+      onUpdate: (self) => {
+        const progress = self.progress;
+        const frameNum = Math.round(progress * (this.totalFrames - 1)) + 1;
+        this.loadFrame(frameNum);
 
-    this.scrollTrigger = tl.scrollTrigger;
-
-    // Add completion handler
-    tl.to({}, {
-      duration: 0.1,
-      onComplete: () => {
-        if (this.scrollTrigger && this.scrollTrigger.progress >= 0.99) {
+        // Check if animation is complete
+        if (progress >= 0.99) {
           this.enableScroll();
           this.isAnimating = false;
+        } else if (progress > 0 && progress < 0.99) {
+          this.disableScroll();
         }
+      },
+      onLeaveBack: () => {
+        this.enableScroll();
+        this.isAnimating = false;
       }
     });
   }
