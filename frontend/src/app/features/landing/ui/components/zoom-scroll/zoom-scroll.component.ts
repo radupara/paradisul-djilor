@@ -73,7 +73,11 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private preloadAllFrames(): void {
     // Preload all frames for smooth playback without stuttering
-    for (let i = 1; i <= this.totalFrames; i++) {
+    // Load frame 1 first (the initial background frame)
+    this.preloadFrame(1);
+
+    // Then load remaining frames
+    for (let i = 2; i <= this.totalFrames; i++) {
       this.preloadFrame(i);
     }
   }
