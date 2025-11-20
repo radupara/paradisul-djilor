@@ -1,7 +1,7 @@
 .hero-section {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 75vh;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -37,7 +37,7 @@ app-hero-background {
   padding: 0 4rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 4rem;
   height: 100%;
 }
@@ -46,8 +46,8 @@ app-hero-background {
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  /* Left align text */
+  align-items: center;
+  justify-content: center;
   gap: 2rem;
   max-width: 60%;
 }
@@ -57,7 +57,7 @@ app-hero-background {
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 40%;
+  max-width: 50%;
 }
 
 .logo-card {
@@ -91,9 +91,15 @@ app-hero-background {
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.1;
-    color: #fff;
-    text-align: left;
+    background-clip: text;
+    background-image: linear-gradient(60deg, rgb(139, 61, 255), rgb(35, 247, 221), rgb(35, 247, 221), rgb(35, 247, 221));
+    background-size: 197.58%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    text-align: center;
     display: block;
+    filter: drop-shadow(rgb(10, 10, 10) 5px 2px 4.8px);
 
     .word {
       margin-right: 0.25em;
@@ -106,10 +112,10 @@ app-hero-background {
   min-height: 3rem;
 
   ::ng-deep .hero-subtitle {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 400;
     color: rgba(255, 255, 255, 0.8);
-    text-align: left;
+    text-align: center;
     display: block;
 
     .word {
