@@ -97,7 +97,7 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
     if (frameNum === this.currentFrameIndex) return;
 
     this.currentFrameIndex = Math.max(1, Math.min(frameNum, this.totalFrames));
-    
+
     // Load frame immediately if cached, otherwise load asynchronously
     if (this.imageCache.has(this.currentFrameIndex)) {
       this.imageUrl = this.imageCache.get(this.currentFrameIndex) || '';
@@ -119,6 +119,10 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
       this.imageUrl = url;
       this.imageLoaded = true;
     }
+
+    // Preload adjacent frames for smoother playback
+    this.preloadFrame(this.currentFrameIndex + 1);
+    this.preloadFrame(this.currentFrameIndex - 1);
   }
 
   private getImageUrl(frameNum: number): string {
