@@ -46,12 +46,29 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
       if (rect) {
         canvas.width = rect.width;
         canvas.height = rect.height;
-        this.drawFrame(1);
+        // Draw frame 1 immediately if available, or wait for it to load
+        const frame1 = this.imageCache.get(1);
+        if (frame1 && frame1.complete && frame1.naturalWidth > 0) {
+          this.drawFrame(1);
+        } else {
+          // If frame 1 not loaded yet, load it and draw
+          this.loadAndDrawFirstFrame();
+        }
       }
     };
 
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
+  }
+
+  private loadAndDrawFirstFrame(): void {
+    const img = new Image();
+    const url = this.getImageUrl(1);
+    img.src = url;
+    img.onload = () => {
+      this.imageCache.set(1, img);
+      this.drawFrame(1);
+    };
   }
 
   private preloadAllFrames(): void {
