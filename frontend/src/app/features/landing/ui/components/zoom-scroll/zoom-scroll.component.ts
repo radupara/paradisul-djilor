@@ -48,17 +48,20 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private preloadFrame(frameNum: number): void {
-    if (this.preloadedFrames.has(frameNum)) return;
-    
+    // Ensure frame number is valid (1-280)
+    const validFrameNum = Math.max(1, Math.min(frameNum, this.totalFrames));
+
+    if (this.preloadedFrames.has(validFrameNum)) return;
+
     const img = new Image();
-    const url = this.getImageUrl(frameNum);
+    const url = this.getImageUrl(validFrameNum);
     img.src = url;
     img.onload = () => {
-      this.imageCache.set(frameNum, url);
-      this.preloadedFrames.add(frameNum);
+      this.imageCache.set(validFrameNum, url);
+      this.preloadedFrames.add(validFrameNum);
     };
     img.onerror = () => {
-      console.warn(`Failed to preload frame ${frameNum}`);
+      console.warn(`Failed to preload frame ${validFrameNum} from ${url}`);
     };
   }
 
