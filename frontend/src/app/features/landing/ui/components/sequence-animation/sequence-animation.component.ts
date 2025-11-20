@@ -69,12 +69,14 @@ export class SequenceAnimationComponent implements OnInit, OnDestroy {
   private setupScrollAnimation() {
     if (!this.canvas) return;
 
+    const containerHeight = window.innerHeight * 3;
+
     this.scrollTrigger = ScrollTrigger.create({
       trigger: this.canvas.parentElement,
       start: 'top center',
-      end: 'bottom center',
+      end: `+=${containerHeight}`,
       onUpdate: (self) => {
-        const progress = Math.min(self.getVelocity() / 300, 1);
+        const progress = Math.max(0, Math.min(self.progress, 1));
         this.currentFrame = Math.floor(progress * (this.totalFrames - 1));
         this.drawFrame();
       },
