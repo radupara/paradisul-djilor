@@ -91,18 +91,23 @@ app-hero-background {
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.1;
-    background-clip: text;
-    background-image: linear-gradient(60deg, rgb(139, 61, 255), rgb(35, 247, 221), rgb(35, 247, 221), rgb(35, 247, 221));
-    background-size: 197.58%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
     text-align: center;
-    display: block;
-    filter: drop-shadow(rgb(10, 10, 10) 5px 2px 4.8px);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25em;
+    margin: 0;
 
     .word {
-      margin-right: 0.25em;
+      background-clip: text;
+      background-image: linear-gradient(60deg, rgb(139, 61, 255), rgb(35, 247, 221), rgb(35, 247, 221), rgb(35, 247, 221));
+      background-size: 197.58%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      display: inline-block;
+      filter: drop-shadow(rgb(10, 10, 10) 5px 2px 4.8px);
+      margin-right: 0;
     }
   }
 }
