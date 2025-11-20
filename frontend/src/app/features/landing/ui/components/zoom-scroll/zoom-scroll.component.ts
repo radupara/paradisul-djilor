@@ -13,17 +13,15 @@ gsap.registerPlugin(ScrollTrigger);
   styleUrl: './zoom-scroll.component.scss'
 })
 export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('imageContainer') imageContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('canvas', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('zoomScrollSection') zoomScrollSection!: ElementRef<HTMLDivElement>;
 
   currentFrameIndex: number = 0;
   totalFrames: number = 280;
-  imageLoaded: boolean = false;
-  imageUrl: string = '';
-  isAnimating: boolean = false;
+  private ctx: CanvasRenderingContext2D | null = null;
+  private imageCache: Map<number, HTMLImageElement> = new Map();
   private scrollTrigger: any;
-  private originalScrollBehavior: string = '';
-  private imageCache: Map<number, string> = new Map();
+  private animationFrameId: number | null = null;
   private preloadedFrames: Set<number> = new Set();
 
   constructor() {}
@@ -34,105 +32,51 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     setTimeout(() => {
+      this.setupCanvas();
       this.initializeAnimation();
-      this.loadFrame(1);
     }, 100);
   }
 
+  private setupCanvas(): void {
+    const canvas = this.canvasRef.nativeElement;
+    this.ctx = canvas.getContext('2d');
+
+    const resizeCanvas = () => {
+      const rect = canvas.parentElement?.getBoundingClientRect();
+      if (rect) {
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        this.drawFrame(1);
+      }
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+  }
+
   private preloadKeyFrames(): void {
-    // Preload first, middle, and last frames for better performance
-    const framesToPreload = [1, Math.floor(this.totalFrames / 4), Math.floor(this.totalFrames / 2), Math.floor((this.totalFrames * 3) / 4), this.totalFrames];
+    // Preload multiple key frames for smooth playback
+    const framesToPreload = [1, 30, 60, 90, 120, 150, 180, 210, 240, 280];
     framesToPreload.forEach(frameNum => {
       this.preloadFrame(frameNum);
     });
   }
 
   private preloadFrame(frameNum: number): void {
-    // Ensure frame number is valid (1-280)
     const validFrameNum = Math.max(1, Math.min(frameNum, this.totalFrames));
-
+    
     if (this.preloadedFrames.has(validFrameNum)) return;
-
+    
     const img = new Image();
     const url = this.getImageUrl(validFrameNum);
     img.src = url;
     img.onload = () => {
-      this.imageCache.set(validFrameNum, url);
+      this.imageCache.set(validFrameNum, img);
       this.preloadedFrames.add(validFrameNum);
     };
     img.onerror = () => {
-      console.warn(`Failed to preload frame ${validFrameNum} from ${url}`);
+      console.error(`Failed to preload frame ${validFrameNum}`);
     };
-  }
-
-  private initializeAnimation(): void {
-    if (!this.imageContainer || !this.zoomScrollSection) return;
-
-    this.isAnimating = true;
-    this.originalScrollBehavior = document.documentElement.style.scrollBehavior;
-
-    this.scrollTrigger = ScrollTrigger.create({
-      trigger: this.zoomScrollSection.nativeElement,
-      start: 'top center',
-      end: 'bottom center',
-      pin: false,
-      onUpdate: (self) => {
-        // Calculate frame from 0-100% progress, mapping to frames 1-280
-        const progress = self.progress;
-        const frameNum = Math.ceil(progress * (this.totalFrames - 1)) + 1;
-        this.loadFrame(frameNum);
-
-        // Check if animation is complete
-        if (progress >= 0.99) {
-          this.enableScroll();
-          this.isAnimating = false;
-        } else if (progress > 0 && progress < 0.99) {
-          this.disableScroll();
-        }
-      },
-      onLeaveBack: () => {
-        this.enableScroll();
-        this.isAnimating = false;
-      }
-    });
-  }
-
-  private loadFrame(frameNum: number): void {
-    const validFrameNum = Math.max(1, Math.min(frameNum, this.totalFrames));
-
-    if (validFrameNum === this.currentFrameIndex) return;
-
-    this.currentFrameIndex = validFrameNum;
-
-    // Load frame immediately if cached, otherwise load asynchronously
-    if (this.imageCache.has(this.currentFrameIndex)) {
-      this.imageUrl = this.imageCache.get(this.currentFrameIndex) || '';
-      this.imageLoaded = true;
-    } else {
-      const url = this.getImageUrl(this.currentFrameIndex);
-      this.imageUrl = url;
-      this.imageLoaded = false;
-
-      const img = new Image();
-      img.src = url;
-      img.onload = () => {
-        if (this.currentFrameIndex === validFrameNum) {
-          this.imageCache.set(validFrameNum, url);
-          this.imageLoaded = true;
-        }
-      };
-      img.onerror = () => {
-        console.error(`Failed to load frame ${validFrameNum} from URL: ${url}`);
-      };
-    }
-
-    // Preload adjacent frames for smoother playback
-    if (this.currentFrameIndex < this.totalFrames) {
-      this.preloadFrame(this.currentFrameIndex + 1);
-    }
-    if (this.currentFrameIndex > 1) {
-      this.preloadFrame(this.currentFrameIndex - 1);
-    }
   }
 
   private getImageUrl(frameNum: number): string {
@@ -140,14 +84,103 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
     return `https://www.adaline.ai/sequence/16x9_281/high/graded_4K_100_gm_85_1440_3-${paddedNum}.jpg`;
   }
 
-  private disableScroll(): void {
-    document.body.style.overflow = 'hidden';
+  private initializeAnimation(): void {
+    if (!this.zoomScrollSection || !this.ctx) return;
+
+    // Disable smooth scroll during animation
     document.documentElement.style.scrollBehavior = 'auto';
+
+    this.scrollTrigger = ScrollTrigger.create({
+      trigger: this.zoomScrollSection.nativeElement,
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: (self) => {
+        const progress = self.progress;
+        const frameNum = Math.ceil(progress * (this.totalFrames - 1)) + 1;
+        this.currentFrameIndex = frameNum;
+        
+        // Load frame asynchronously with fallback rendering
+        this.loadAndDrawFrame(frameNum);
+
+        // Preload next and previous frames
+        if (frameNum < this.totalFrames) {
+          this.preloadFrame(frameNum + 1);
+        }
+        if (frameNum > 1) {
+          this.preloadFrame(frameNum - 1);
+        }
+      }
+    });
   }
 
-  private enableScroll(): void {
-    document.body.style.overflow = '';
-    document.documentElement.style.scrollBehavior = this.originalScrollBehavior;
+  private loadAndDrawFrame(frameNum: number): void {
+    const validFrameNum = Math.max(1, Math.min(frameNum, this.totalFrames));
+
+    // If cached, draw immediately
+    if (this.imageCache.has(validFrameNum)) {
+      const img = this.imageCache.get(validFrameNum);
+      if (img) {
+        this.drawFrame(img);
+      }
+      return;
+    }
+
+    // Load frame asynchronously
+    const img = new Image();
+    const url = this.getImageUrl(validFrameNum);
+    img.src = url;
+    img.onload = () => {
+      this.imageCache.set(validFrameNum, img);
+      if (this.currentFrameIndex === validFrameNum) {
+        this.drawFrame(img);
+      }
+    };
+    img.onerror = () => {
+      console.error(`Failed to load frame ${validFrameNum}`);
+    };
+  }
+
+  private drawFrame(frameOrNum: HTMLImageElement | number): void {
+    if (!this.ctx || !this.canvasRef) return;
+
+    const canvas = this.canvasRef.nativeElement;
+    let img: HTMLImageElement | null = null;
+
+    if (typeof frameOrNum === 'number') {
+      img = this.imageCache.get(frameOrNum) || null;
+    } else {
+      img = frameOrNum;
+    }
+
+    if (!img || !img.complete || img.naturalWidth === 0) {
+      // If image not ready, draw placeholder
+      this.ctx.fillStyle = '#000';
+      this.ctx.fillRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
+
+    // Clear canvas
+    this.ctx.fillStyle = '#000';
+    this.ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate dimensions to maintain aspect ratio
+    const imgAspect = img.naturalWidth / img.naturalHeight;
+    const canvasAspect = canvas.width / canvas.height;
+
+    let drawWidth = canvas.width;
+    let drawHeight = canvas.height;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    if (imgAspect > canvasAspect) {
+      drawWidth = canvas.height * imgAspect;
+      offsetX = (canvas.width - drawWidth) / 2;
+    } else {
+      drawHeight = canvas.width / imgAspect;
+      offsetY = (canvas.height - drawHeight) / 2;
+    }
+
+    this.ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
   }
 
   ngOnDestroy(): void {
@@ -155,6 +188,9 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
       this.scrollTrigger.kill();
     }
     ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    this.enableScroll();
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
+    document.documentElement.style.scrollBehavior = '';
   }
 }
