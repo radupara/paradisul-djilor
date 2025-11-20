@@ -149,6 +149,7 @@ app-hero-background {
   }
 
   .subtitle-container ::ng-deep .hero-subtitle {
+    font-size: 1.5rem;
     text-align: center;
   }
 
@@ -158,12 +159,6 @@ app-hero-background {
     &:hover {
       transform: scale(1.02);
     }
-  }
-}
-
-@media (max-width: 1024px) {
-  .subtitle-container ::ng-deep .hero-subtitle {
-    font-size: 1.5rem;
   }
 }
 
