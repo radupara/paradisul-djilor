@@ -97,9 +97,11 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadFrame(frameNum: number): void {
-    if (frameNum === this.currentFrameIndex) return;
+    const validFrameNum = Math.max(1, Math.min(frameNum, this.totalFrames));
 
-    this.currentFrameIndex = Math.max(1, Math.min(frameNum, this.totalFrames));
+    if (validFrameNum === this.currentFrameIndex) return;
+
+    this.currentFrameIndex = validFrameNum;
 
     // Load frame immediately if cached, otherwise load asynchronously
     if (this.imageCache.has(this.currentFrameIndex)) {
@@ -107,25 +109,29 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
       this.imageLoaded = true;
     } else {
       const url = this.getImageUrl(this.currentFrameIndex);
+      this.imageUrl = url;
+      this.imageLoaded = false;
+
       const img = new Image();
       img.src = url;
       img.onload = () => {
-        this.imageCache.set(this.currentFrameIndex, url);
-        this.imageUrl = url;
-        this.imageLoaded = true;
+        if (this.currentFrameIndex === validFrameNum) {
+          this.imageCache.set(validFrameNum, url);
+          this.imageLoaded = true;
+        }
       };
       img.onerror = () => {
-        console.warn(`Failed to load frame ${this.currentFrameIndex}`);
-        this.imageLoaded = false;
+        console.error(`Failed to load frame ${validFrameNum} from URL: ${url}`);
       };
-      // Set placeholder while loading
-      this.imageUrl = url;
-      this.imageLoaded = true;
     }
 
     // Preload adjacent frames for smoother playback
-    this.preloadFrame(this.currentFrameIndex + 1);
-    this.preloadFrame(this.currentFrameIndex - 1);
+    if (this.currentFrameIndex < this.totalFrames) {
+      this.preloadFrame(this.currentFrameIndex + 1);
+    }
+    if (this.currentFrameIndex > 1) {
+      this.preloadFrame(this.currentFrameIndex - 1);
+    }
   }
 
   private getImageUrl(frameNum: number): string {
