@@ -73,12 +73,13 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.scrollTrigger = ScrollTrigger.create({
       trigger: this.zoomScrollSection.nativeElement,
-      start: 'top top',
-      end: 'bottom bottom',
+      start: 'top center',
+      end: 'bottom center',
       pin: false,
       onUpdate: (self) => {
+        // Calculate frame from 0-100% progress, mapping to frames 1-280
         const progress = self.progress;
-        const frameNum = Math.round(progress * (this.totalFrames - 1)) + 1;
+        const frameNum = Math.ceil(progress * (this.totalFrames - 1)) + 1;
         this.loadFrame(frameNum);
 
         // Check if animation is complete
