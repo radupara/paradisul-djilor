@@ -117,14 +117,18 @@ app-hero-background {
   min-height: 3rem;
 
   ::ng-deep .hero-subtitle {
-    font-size: 2rem;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.8);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
     text-align: center;
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.2em;
+    margin: 0;
 
     .word {
-      margin-right: 0.2em;
+      margin-right: 0;
     }
   }
 }
