@@ -1,11 +1,13 @@
 .zoom-scroll-section {
   width: 100%;
-  min-height: 400vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 400vh;
   background: #000;
   position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
 }
 
 .zoom-scroll-container {
