@@ -106,7 +106,7 @@ app-hero-background {
       -webkit-text-fill-color: transparent;
       color: transparent;
       display: inline-block;
-      filter: drop-shadow(0 10px 20px rgba(139, 61, 255, 0.4)) drop-shadow(0 5px 10px rgba(35, 247, 221, 0.3));
+      filter: drop-shadow(0 10px 20px rgba(255, 255, 255, 0.4)) drop-shadow(0 5px 10px rgba(255, 255, 255, 0.3));
       margin-right: 0;
       text-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     }
@@ -130,6 +130,8 @@ app-hero-background {
 
     .word {
       margin-right: 0;
+      filter: drop-shadow(0 5px 10px rgba(255, 255, 255, 0.3));
+      text-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
     }
   }
 }
