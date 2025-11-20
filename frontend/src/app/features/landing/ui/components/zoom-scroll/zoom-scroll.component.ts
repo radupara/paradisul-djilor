@@ -27,7 +27,7 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor() {}
 
   ngOnInit(): void {
-    this.preloadKeyFrames();
+    this.preloadAllFrames();
   }
 
   ngAfterViewInit(): void {
