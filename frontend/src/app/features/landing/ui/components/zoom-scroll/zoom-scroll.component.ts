@@ -93,21 +93,14 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
       trigger: this.zoomScrollSection.nativeElement,
       start: 'top top',
       end: 'bottom bottom',
+      anticipatePin: 1,
       onUpdate: (self) => {
         const progress = self.progress;
         const frameNum = Math.ceil(progress * (this.totalFrames - 1)) + 1;
         this.currentFrameIndex = frameNum;
-        
-        // Load frame asynchronously with fallback rendering
-        this.loadAndDrawFrame(frameNum);
 
-        // Preload next and previous frames
-        if (frameNum < this.totalFrames) {
-          this.preloadFrame(frameNum + 1);
-        }
-        if (frameNum > 1) {
-          this.preloadFrame(frameNum - 1);
-        }
+        // Draw frame immediately from cache (should be preloaded)
+        this.drawFrame(frameNum);
       }
     });
   }
