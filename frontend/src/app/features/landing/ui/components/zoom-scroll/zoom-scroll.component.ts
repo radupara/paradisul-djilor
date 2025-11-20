@@ -54,12 +54,11 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
     window.addEventListener('resize', resizeCanvas);
   }
 
-  private preloadKeyFrames(): void {
-    // Preload multiple key frames for smooth playback
-    const framesToPreload = [1, 30, 60, 90, 120, 150, 180, 210, 240, 280];
-    framesToPreload.forEach(frameNum => {
-      this.preloadFrame(frameNum);
-    });
+  private preloadAllFrames(): void {
+    // Preload all frames for smooth playback without stuttering
+    for (let i = 1; i <= this.totalFrames; i++) {
+      this.preloadFrame(i);
+    }
   }
 
   private preloadFrame(frameNum: number): void {
