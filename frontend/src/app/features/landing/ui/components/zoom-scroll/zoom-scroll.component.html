@@ -1,0 +1,15 @@
+<section class="zoom-scroll-section" #zoomScrollSection>
+  <div class="zoom-scroll-container">
+    <div class="image-wrapper" #imageContainer>
+      <img
+        [src]="imageUrl"
+        alt="Zoom scroll animation"
+        class="zoom-scroll-image"
+        [class.loaded]="imageLoaded"
+      />
+    </div>
+    <div class="frame-indicator">
+      {{ currentFrameIndex }} / {{ totalFrames }}
+    </div>
+  </div>
+</section>
