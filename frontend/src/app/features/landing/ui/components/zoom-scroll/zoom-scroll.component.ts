@@ -101,7 +101,7 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private getImageUrl(frameNum: number): string {
     const paddedNum = String(frameNum).padStart(3, '0');
-    return `https://www.adaline.ai/sequence/16x9_281/high/graded_4K_100_gm_85_1440_3-${paddedNum}.jpg`;
+    return `assets/images/frames/frame-${paddedNum}.jpg`;
   }
 
   private initializeAnimation(): void {
