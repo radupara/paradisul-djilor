@@ -1,10 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface BackgroundImage {
   id: number;
   src: string;
-  displaySrc?: string;
 }
 
 @Component({
@@ -14,19 +13,13 @@ interface BackgroundImage {
   templateUrl: './hero-background.component.html',
   styleUrl: './hero-background.component.scss'
 })
-export class HeroBackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
+export class HeroBackgroundComponent implements OnInit {
   images: BackgroundImage[] = [];
   galleryImages: BackgroundImage[] = [];
-  @ViewChild('galleryGrid') galleryGrid!: ElementRef<HTMLDivElement>;
-  private intersectionObserver: IntersectionObserver | null = null;
 
   ngOnInit(): void {
     this.initializeGalleryImages();
     this.generateBackgroundGallery();
-  }
-
-  ngAfterViewInit(): void {
-    this.setupLazyLoading();
   }
 
   private initializeGalleryImages(): void {
@@ -58,43 +51,8 @@ export class HeroBackgroundComponent implements OnInit, AfterViewInit, OnDestroy
       const randomIndex = Math.floor(Math.random() * this.galleryImages.length);
       this.images.push({
         id: i,
-        src: this.galleryImages[randomIndex].src,
-        displaySrc: undefined
+        src: this.galleryImages[randomIndex].src
       });
-    }
-  }
-
-  private setupLazyLoading(): void {
-    if (!this.galleryGrid) return;
-
-    const options = {
-      root: null,
-      rootMargin: '100px',
-      threshold: 0.01
-    };
-
-    this.intersectionObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const img = entry.target as HTMLImageElement;
-          const src = img.getAttribute('data-src');
-          if (src && !img.src) {
-            img.src = src;
-            this.intersectionObserver?.unobserve(entry.target);
-          }
-        }
-      });
-    }, options);
-
-    const images = this.galleryGrid.nativeElement.querySelectorAll('img.gallery-image');
-    images.forEach((img: Element) => {
-      this.intersectionObserver?.observe(img);
-    });
-  }
-
-  ngOnDestroy(): void {
-    if (this.intersectionObserver) {
-      this.intersectionObserver.disconnect();
     }
   }
 }
