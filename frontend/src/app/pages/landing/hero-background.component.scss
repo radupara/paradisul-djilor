@@ -12,15 +12,13 @@
 
   .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    /* Increased from 8 to 10 */
-    grid-template-rows: repeat(5, 1fr);
-    /* Increased from 4 to 5 */
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(4, 1fr);
     width: 200%;
-    /* Make it wider for scrolling */
     height: 100%;
     gap: 10px;
     background-color: #000;
+    will-change: transform;
     animation: scrollBackground 60s linear infinite;
   }
 
