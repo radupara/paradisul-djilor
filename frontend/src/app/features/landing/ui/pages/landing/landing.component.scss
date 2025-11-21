@@ -138,6 +138,12 @@
         text-decoration: underline;
       }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      a {
+        transition: none;
+      }
+    }
   }
 }
 
