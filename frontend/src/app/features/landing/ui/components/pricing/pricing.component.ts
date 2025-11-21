@@ -24,37 +24,39 @@ export class PricingComponent {
   pricingPlans: PricingPlan[] = [
     {
       name: 'Standard',
-      price: 499,
+      price: 10,
       billingPeriod: 'monthly',
-      description: 'Perfect for getting started',
+      description: 'Essential client management',
       features: [
-        'Professional DJ services (4 hours)',
-        'Bose F1 812 sound system',
-        'Moving heads lighting system',
-        'Setup and pack down included',
-        'Background music for dinner',
-        'Microphone for speeches'
+        'Client Details at Your Fingertips. Always',
+        'Event Details, Timeline, Reminders—All Synced',
+        'Stop Chasing Clients for Information',
+        'Never Miss a Client Detail Again',
+        'One Platform. All Your Client Needs',
+        'Automate Reminders. Book More Events'
       ],
       buttonText: 'Subscribe Now',
       isPopular: false
     },
     {
       name: 'PRO',
-      price: 799,
+      price: 20,
       billingPeriod: 'monthly',
-      description: 'Complete event solution',
+      description: 'Complete command center for DJs',
       features: [
-        'Professional DJ services (4 hours)',
-        'Bose F1 812 sound system',
-        'Moving heads lighting system',
-        'Setup and pack down included',
-        'Background music for dinner',
-        'Microphone for speeches',
-        'Background music for cocktail hour'
+        'Client Details at Your Fingertips. Always',
+        'Event Details, Timeline, Reminders—All Synced',
+        'Stop Chasing Clients for Information',
+        'Never Miss a Client Detail Again',
+        'One Platform. All Your Client Needs',
+        'Automate Reminders. Book More Events'
       ],
       extras: [
-        'Annual reports included',
-        'Priority support'
+        'Your Annual DJ Report Card—Built Automatically',
+        'Get Paid Faster. Organize Smarter',
+        'Client Requests. Automated Follow-Ups. Zero Dropped Balls',
+        'The Command Center Every DJ Needs',
+        'Your Complete DJ Year: Tracked, Organized, Optimized'
       ],
       buttonText: 'Subscribe Now',
       isPopular: true
