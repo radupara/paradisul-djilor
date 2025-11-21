@@ -1,12 +1,10 @@
 <div class="hero-background-gallery">
-  <div class="gallery-grid">
+  <div class="gallery-grid" #galleryGrid>
     <div *ngFor="let image of images" class="gallery-item">
       <img 
-        [attr.data-id]="image.id"
-        (afterViewInit)="onImageInit($event.target, image.id)"
+        [attr.data-src]="image.src"
         alt="Event image {{ image.id }}" 
-        class="gallery-image"
-        (load)="$event.target">
+        class="gallery-image">
     </div>
   </div>
   <div class="gallery-overlay"></div>
