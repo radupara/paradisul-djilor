@@ -87,7 +87,7 @@ export class HeroBackgroundComponent implements OnInit, AfterViewInit, OnDestroy
     }, options);
 
     const images = this.galleryGrid.nativeElement.querySelectorAll('img.gallery-image');
-    images.forEach((img: HTMLImageElement) => {
+    images.forEach((img: Element) => {
       this.intersectionObserver?.observe(img);
     });
   }
