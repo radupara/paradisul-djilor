@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build"
+  },
   "devDependencies": {
     "@angular/cli": "^21.0.0"
   }
