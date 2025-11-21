@@ -50,10 +50,53 @@
     },
     "pricing": {
       "title": "Pricing",
+      "sectionTitle": "Monthly Subscription Plans",
+      "sectionSubtitle": "Choose the perfect plan for your needs",
       "monthly": "Monthly Subscription",
-      "currency": "RON",
-      "subscribe": "Subscribe"
+      "currency": "EUR",
+      "subscribe": "Subscribe",
+      "includes": "INCLUDES",
+      "extra": "EXTRA",
+      "perMonth": "/ month",
+      "plans": {
+        "standard": {
+          "name": "Standard",
+          "description": "Essential Client Management",
+          "features": {
+            "clientDetails": "Client Details at Your Fingertips. Always.",
+            "eventDetails": "Event Details, Timeline, Reminders — All Synced.",
+            "stopChasing": "Stop Chasing Clients for Information.",
+            "neverMiss": "Never Miss a Client Detail Again!",
+            "onePlatform": "One Platform. All Your Client Needs.",
+            "automateReminders": "Automate Reminders. Book More Events."
+          },
+          "price": "10",
+          "buttonText": "Subscribe Now"
+        },
+        "pro": {
+          "name": "PRO",
+          "description": "Complete DJ Command Center",
+          "features": {
+            "clientDetails": "Client Details at Your Fingertips. Always.",
+            "eventDetails": "Event Details, Timeline, Reminders — All Synced.",
+            "stopChasing": "Stop Chasing Clients for Information.",
+            "neverMiss": "Never Miss a Client Detail Again!",
+            "onePlatform": "One Platform. All Your Client Needs.",
+            "automateReminders": "Automate Reminders. Book More Events."
+          },
+          "extras": {
+            "annualReport": "Your Annual DJ Report — Automatically Generated",
+            "getPaidFaster": "Get Paid Faster. Organize Smarter.",
+            "clientRequests": "Client Requests. Automated Follow-ups. Zero Mistakes.",
+            "commandCenter": "The Command Center Every DJ Needs.",
+            "completeYear": "Your Complete DJ Year: Tracked, Organized, Optimized."
+          },
+          "price": "20",
+          "buttonText": "Subscribe Now"
+        }
+      }
     },
+    "buttonText": "Subscribe Now",
     "cta": {
       "title": "Join Now",
       "description": "This app will facilitate communication between the DJ and the DJ's clients."
@@ -68,4 +111,3 @@
     "language": "Language"
   }
 }
-

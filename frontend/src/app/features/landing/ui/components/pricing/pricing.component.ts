@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 interface PricingPlan {
   name: string;
-  price: number;
+  price: string;
   billingPeriod: string;
   description: string;
   features: string[];
@@ -23,42 +23,42 @@ interface PricingPlan {
 export class PricingComponent {
   pricingPlans: PricingPlan[] = [
     {
-      name: 'Standard',
-      price: 10,
+      name: 'landing.pricing.plans.standard.name',
+      price: 'landing.pricing.plans.standard.price',
       billingPeriod: 'monthly',
-      description: 'Essential client management',
+      description: 'landing.pricing.plans.standard.description',
       features: [
-        'Client Details at Your Fingertips. Always',
-        'Event Details, Timeline, Reminders—All Synced',
-        'Stop Chasing Clients for Information',
-        'Never Miss a Client Detail Again',
-        'One Platform. All Your Client Needs',
-        'Automate Reminders. Book More Events'
+        'landing.pricing.plans.standard.features.clientDetails',
+        'landing.pricing.plans.standard.features.eventDetails',
+        'landing.pricing.plans.standard.features.stopChasing',
+        'landing.pricing.plans.standard.features.neverMiss',
+        'landing.pricing.plans.standard.features.onePlatform',
+        'landing.pricing.plans.standard.features.automateReminders'
       ],
-      buttonText: 'Subscribe Now',
+      buttonText: 'landing.pricing.plans.standard.buttonText',
       isPopular: false
     },
     {
-      name: 'PRO',
-      price: 20,
+      name: 'landing.pricing.plans.pro.name',
+      price: 'landing.pricing.plans.pro.price',
       billingPeriod: 'monthly',
-      description: 'Complete command center for DJs',
+      description: 'landing.pricing.plans.pro.description',
       features: [
-        'Client Details at Your Fingertips. Always',
-        'Event Details, Timeline, Reminders—All Synced',
-        'Stop Chasing Clients for Information',
-        'Never Miss a Client Detail Again',
-        'One Platform. All Your Client Needs',
-        'Automate Reminders. Book More Events'
+        'landing.pricing.plans.pro.features.clientDetails',
+        'landing.pricing.plans.pro.features.eventDetails',
+        'landing.pricing.plans.pro.features.stopChasing',
+        'landing.pricing.plans.pro.features.neverMiss',
+        'landing.pricing.plans.pro.features.onePlatform',
+        'landing.pricing.plans.pro.features.automateReminders'
       ],
       extras: [
-        'Your Annual DJ Report Card—Built Automatically',
-        'Get Paid Faster. Organize Smarter',
-        'Client Requests. Automated Follow-Ups. Zero Dropped Balls',
-        'The Command Center Every DJ Needs',
-        'Your Complete DJ Year: Tracked, Organized, Optimized'
+        'landing.pricing.plans.pro.extras.annualReport',
+        'landing.pricing.plans.pro.extras.getPaidFaster',
+        'landing.pricing.plans.pro.extras.clientRequests',
+        'landing.pricing.plans.pro.extras.commandCenter',
+        'landing.pricing.plans.pro.extras.completeYear'
       ],
-      buttonText: 'Subscribe Now',
+      buttonText: 'landing.pricing.plans.pro.buttonText',
       isPopular: true
     }
   ];

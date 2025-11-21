@@ -50,9 +50,51 @@
     },
     "pricing": {
       "title": "Prețuri",
+      "sectionTitle": "Planuri de abonament lunar",
+      "sectionSubtitle": "Alege planul perfect pentru nevoile tale",
       "monthly": "Abonament lunar",
       "currency": "RON",
-      "subscribe": "Abonează-te"
+      "subscribe": "Abonează-te",
+      "includes": "INCLUDE",
+      "extra": "EXTRA",
+      "perMonth": "/ lună",
+      "plans": {
+        "standard": {
+          "name": "Standard",
+          "description": "Gestionare esențială a clienților",
+          "features": {
+            "clientDetails": "Detaliile clienților la îndemână. Întotdeauna",
+            "eventDetails": "Detalii eveniment, Cronologie, Mementouri—Toate Sincronizate",
+            "stopChasing": "Nu mai alerga după informații de la clienți",
+            "neverMiss": "Nu rata niciodată un detaliu despre client",
+            "onePlatform": "O singură platformă. Toate nevoile clienților tăi",
+            "automateReminders": "Automatizează mementourile. Rezervă mai multe evenimente"
+          },
+          "price": "50",
+          "buttonText": "Abonează-te acum"
+        },
+        "pro": {
+          "name": "PRO",
+          "description": "Centru de comandă complet pentru DJ",
+          "features": {
+            "clientDetails": "Detaliile clienților la îndemână. Întotdeauna",
+            "eventDetails": "Detalii eveniment, Cronologie, Mementouri—Toate Sincronizate",
+            "stopChasing": "Nu mai alerga după informații de la clienți",
+            "neverMiss": "Nu rata niciodată un detaliu despre client",
+            "onePlatform": "O singură platformă. Toate nevoile clienților tăi",
+            "automateReminders": "Automatizează mementourile. Rezervă mai multe evenimente"
+          },
+          "extras": {
+            "annualReport": "Raportul tău anual de DJ—Generat automat",
+            "getPaidFaster": "Primește plățile mai rapid. Organizează-te mai inteligent",
+            "clientRequests": "Cereri clienți. Urmăriri automate. Nicio greșeală",
+            "commandCenter": "Centrul de comandă de care are nevoie orice DJ",
+            "completeYear": "Anul tău complet ca DJ: Urmărit, Organizat, Optimizat"
+          },
+          "price": "100",
+          "buttonText": "Abonează-te acum"
+        }
+      }
     },
     "cta": {
       "title": "Alătură-te acum",
@@ -68,4 +110,3 @@
     "language": "Limbă"
   }
 }
-

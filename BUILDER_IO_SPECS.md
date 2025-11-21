@@ -41,7 +41,8 @@ Design a modern, professional landing page with the following sections:
 - Display subscription
 - There is only a Monthly subscription option
 - Mention Stripe payment integration
-- Currency: Romanian Leu (RON)
+- Currency: Romanian Leu (RON) for romanian language
+- English currency: United States Dollar (USD) for english language
 - Clear pricing display
 
 #### Call-to-Action Section

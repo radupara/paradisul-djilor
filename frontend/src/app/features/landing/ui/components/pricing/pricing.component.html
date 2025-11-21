@@ -1,19 +1,17 @@
 <section class="pricing-section">
   <div class="pricing-container">
     <div class="pricing-header">
-      <h2 class="pricing-title">Monthly Subscription Plans</h2>
-      <p class="pricing-subtitle">Choose the perfect plan for your needs</p>
+      <h2 class="pricing-title">{{ 'landing.pricing.sectionTitle' | translate }}</h2>
+      <p class="pricing-subtitle">{{ 'landing.pricing.sectionSubtitle' | translate }}</p>
     </div>
 
     <div class="pricing-grid">
-      <div *ngFor="let plan of pricingPlans" 
-           class="pricing-card"
-           [class.pricing-card-popular]="plan.isPopular">
-        
+      <div *ngFor="let plan of pricingPlans" class="pricing-card" [class.pricing-card-popular]="plan.isPopular">
+
         <!-- Plan Header -->
         <div class="plan-header">
-          <h3 class="plan-name">{{ plan.name }}</h3>
-          <p class="plan-description">{{ plan.description }}</p>
+          <h3 class="plan-name">{{ plan.name | translate }}</h3>
+          <p class="plan-description">{{ plan.description | translate }}</p>
         </div>
 
         <!-- Spacing -->
@@ -22,9 +20,9 @@
         <!-- Price -->
         <div class="plan-pricing">
           <div class="price-display">
-            <span class="currency">$</span>
-            <span class="amount">{{ plan.price }}</span>
-            <span class="period">/ {{ plan.billingPeriod }}</span>
+            <span class="currency">{{ 'landing.pricing.currency' | translate }}</span>
+            <span class="amount">{{ plan.price | translate }}</span>
+            <span class="period">{{ 'landing.pricing.perMonth' | translate }}</span>
           </div>
         </div>
 
@@ -33,7 +31,7 @@
 
         <!-- Features Header -->
         <div class="features-header">
-          <h6 class="features-label">INCLUDES</h6>
+          <h6 class="features-label">{{ 'landing.pricing.includes' | translate }}</h6>
         </div>
 
         <!-- Spacing -->
@@ -43,7 +41,7 @@
         <div class="features-list">
           <ul class="features-ul">
             <li *ngFor="let feature of plan.features" class="feature-item">
-              <span class="feature-text">{{ feature }}</span>
+              <span class="feature-text">{{ feature | translate }}</span>
             </li>
           </ul>
         </div>
@@ -54,7 +52,7 @@
         <!-- Extras (PRO only) -->
         <ng-container *ngIf="plan.extras && plan.extras.length > 0">
           <div class="extras-header">
-            <h6 class="extras-label">EXTRA</h6>
+            <h6 class="extras-label">{{ 'landing.pricing.extra' | translate }}</h6>
           </div>
 
           <!-- Spacing -->
@@ -63,7 +61,7 @@
           <div class="extras-list">
             <ul class="extras-ul">
               <li *ngFor="let extra of plan.extras" class="extra-item">
-                <span class="extra-text">{{ extra }}</span>
+                <span class="extra-text">{{ extra | translate }}</span>
               </li>
             </ul>
           </div>
@@ -87,7 +85,7 @@
         <!-- CTA Button -->
         <div class="plan-cta">
           <button class="subscribe-button" (click)="onSubscribe(plan.name)">
-            {{ plan.buttonText }}
+            {{ plan.buttonText | translate }}
           </button>
         </div>
       </div>
