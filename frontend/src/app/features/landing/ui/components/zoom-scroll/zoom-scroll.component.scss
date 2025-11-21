@@ -8,6 +8,10 @@
   justify-content: center;
   margin: 0;
   padding: 0;
+
+  @media (prefers-reduced-motion: reduce) {
+    height: 100vh;
+  }
 }
 
 .zoom-scroll-container {
