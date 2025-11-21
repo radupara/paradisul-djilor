@@ -68,9 +68,18 @@ app-hero-background {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   transform: perspective(1000px) rotateY(-5deg);
   transition: transform 0.3s ease;
+  will-change: transform;
 
   &:hover {
     transform: perspective(1000px) rotateY(0deg) scale(1.02);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+
+    &:hover {
+      transform: scale(1.02);
+    }
   }
 
   .hero-logo {
