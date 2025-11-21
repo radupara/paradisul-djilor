@@ -42,8 +42,8 @@ export class HeroBackgroundComponent implements OnInit {
   }
 
   private generateBackgroundGallery(): void {
-    const columnCount = 10; // Increased to match SCSS
-    const rowCount = 5; // Increased to match SCSS
+    const columnCount = 8;
+    const rowCount = 4;
     const totalTiles = columnCount * rowCount;
     this.images = [];
 

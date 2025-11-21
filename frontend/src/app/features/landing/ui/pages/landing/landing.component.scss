@@ -35,10 +35,20 @@
     border-radius: 8px;
     background: #f9f9f9;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform, box-shadow;
 
     &:hover {
       transform: translateY(-5px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+
+      &:hover {
+        transform: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
     }
 
     h3 {
@@ -54,36 +64,6 @@
   }
 }
 
-.pricing-section {
-  margin-bottom: 4rem;
-  text-align: center;
-
-  .section-title {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-    color: #333;
-  }
-
-  .pricing-card {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 3rem;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-
-    h3 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-    }
-
-    .pricing-note {
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
-      opacity: 0.9;
-    }
-  }
-}
 
 .cta-section {
   text-align: center;
@@ -91,6 +71,7 @@
   background: #f9f9f9;
   border-radius: 12px;
   margin-bottom: 4rem;
+  will-change: auto;
 
   .cta-title {
     font-size: 2.5rem;
@@ -128,6 +109,12 @@
         text-decoration: underline;
       }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      a {
+        transition: none;
+      }
+    }
   }
 }
 
@@ -139,6 +126,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 1rem;
+  will-change: transform, box-shadow;
 
   &.btn-primary {
     background: white;
@@ -158,6 +146,16 @@
 
     &:hover {
       background: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    will-change: auto;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
     }
   }
 }

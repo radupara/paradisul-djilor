@@ -21,7 +21,6 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
   private ctx: CanvasRenderingContext2D | null = null;
   private imageCache: Map<number, HTMLImageElement> = new Map();
   private scrollTrigger: any;
-  private animationFrameId: number | null = null;
   private preloadedFrames: Set<number> = new Set();
 
   constructor() { }
@@ -37,6 +36,12 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 100);
   }
 
+  private preloadAllFrames(): void {
+    for (let i = 1; i <= this.totalFrames; i++) {
+      this.preloadFrame(i);
+    }
+  }
+
   private setupCanvas(): void {
     const canvas = this.canvasRef.nativeElement;
     this.ctx = canvas.getContext('2d');
@@ -46,12 +51,10 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
       if (rect) {
         canvas.width = rect.width;
         canvas.height = rect.height;
-        // Draw frame 1 immediately if available, or wait for it to load
         const frame1 = this.imageCache.get(1);
         if (frame1 && frame1.complete && frame1.naturalWidth > 0) {
           this.drawFrame(1);
         } else {
-          // If frame 1 not loaded yet, load it and draw
           this.loadAndDrawFirstFrame();
         }
       }
@@ -69,17 +72,6 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
       this.imageCache.set(1, img);
       this.drawFrame(1);
     };
-  }
-
-  private preloadAllFrames(): void {
-    // Preload all frames for smooth playback without stuttering
-    // Load frame 1 first (the initial background frame)
-    this.preloadFrame(1);
-
-    // Then load remaining frames
-    for (let i = 2; i <= this.totalFrames; i++) {
-      this.preloadFrame(i);
-    }
   }
 
   private preloadFrame(frameNum: number): void {
@@ -107,9 +99,6 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
   private initializeAnimation(): void {
     if (!this.zoomScrollSection || !this.ctx) return;
 
-    // Disable smooth scroll during animation
-    document.documentElement.style.scrollBehavior = 'auto';
-
     this.scrollTrigger = ScrollTrigger.create({
       trigger: this.zoomScrollSection.nativeElement,
       start: 'top top',
@@ -120,7 +109,6 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
         const frameNum = Math.ceil(progress * (this.totalFrames - 1)) + 1;
         this.currentFrameIndex = frameNum;
 
-        // Draw frame immediately from cache (should be preloaded)
         this.drawFrame(frameNum);
       }
     });
@@ -135,17 +123,11 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
     const img = this.imageCache.get(validFrameNum);
 
     if (!img || !img.complete || img.naturalWidth === 0) {
-      // If image not ready, draw placeholder
       this.ctx.fillStyle = '#000';
       this.ctx.fillRect(0, 0, canvas.width, canvas.height);
       return;
     }
 
-    // Clear canvas
-    this.ctx.fillStyle = '#000';
-    this.ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Calculate dimensions to maintain aspect ratio
     const imgAspect = img.naturalWidth / img.naturalHeight;
     const canvasAspect = canvas.width / canvas.height;
 
@@ -162,6 +144,8 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
       offsetY = (canvas.height - drawHeight) / 2;
     }
 
+    this.ctx.fillStyle = '#000';
+    this.ctx.fillRect(0, 0, canvas.width, canvas.height);
     this.ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
   }
 
@@ -170,9 +154,6 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
       this.scrollTrigger.kill();
     }
     ScrollTrigger.getAll().forEach((trigger: any) => trigger.kill());
-    if (this.animationFrameId) {
-      cancelAnimationFrame(this.animationFrameId);
-    }
-    document.documentElement.style.scrollBehavior = '';
+    this.imageCache.clear();
   }
 }

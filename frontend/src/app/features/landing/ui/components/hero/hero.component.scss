@@ -1,13 +1,12 @@
 .hero-section {
   position: relative;
   width: 100%;
-  height: 75vh;
+  height: 100vh;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #121212;
-  /* Dark theme from JSON */
 }
 
 app-hero-background {
@@ -49,7 +48,7 @@ app-hero-background {
   align-items: center;
   justify-content: center;
   gap: 2rem;
-  max-width: 60%;
+  min-width: 0;
 }
 
 .hero-image-content {
@@ -57,7 +56,7 @@ app-hero-background {
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 50%;
+  min-width: 0;
 }
 
 .logo-card {
@@ -69,9 +68,18 @@ app-hero-background {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   transform: perspective(1000px) rotateY(-5deg);
   transition: transform 0.3s ease;
+  will-change: transform;
 
   &:hover {
     transform: perspective(1000px) rotateY(0deg) scale(1.02);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+
+    &:hover {
+      transform: scale(1.02);
+    }
   }
 
   .hero-logo {
@@ -106,9 +114,9 @@ app-hero-background {
       -webkit-text-fill-color: transparent;
       color: transparent;
       display: inline-block;
-      filter: drop-shadow(0 10px 20px rgba(255, 255, 255, 0.4)) drop-shadow(0 5px 10px rgba(255, 255, 255, 0.3));
+      filter: drop-shadow(0 8px 16px rgba(255, 255, 255, 0.3));
       margin-right: 0;
-      text-shadow: 0 20px 40px rgba(0, 0, 0, 0.451);
+      text-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
     }
 
     .word:nth-child(1) {
@@ -150,8 +158,8 @@ app-hero-background {
 
     .word {
       margin-right: 0;
-      filter: drop-shadow(0 5px 10px rgba(255, 255, 255, 0.3));
-      text-shadow: 0 10px 20px rgba(255, 255, 255, 0.4);
+      filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.25));
+      text-shadow: 0 8px 16px rgba(255, 255, 255, 0.3);
     }
   }
 }
