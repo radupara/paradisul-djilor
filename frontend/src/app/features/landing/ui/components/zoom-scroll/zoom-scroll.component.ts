@@ -24,7 +24,7 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
   private animationFrameId: number | null = null;
   private preloadedFrames: Set<number> = new Set();
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     this.preloadAllFrames();
@@ -84,9 +84,9 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private preloadFrame(frameNum: number): void {
     const validFrameNum = Math.max(1, Math.min(frameNum, this.totalFrames));
-    
+
     if (this.preloadedFrames.has(validFrameNum)) return;
-    
+
     const img = new Image();
     const url = this.getImageUrl(validFrameNum);
     img.src = url;
@@ -101,7 +101,7 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private getImageUrl(frameNum: number): string {
     const paddedNum = String(frameNum).padStart(3, '0');
-    return `assets/images/frames/frame-${paddedNum}.jpg`;
+    return `assets/images/frames/frame-${paddedNum}.png`;
   }
 
   private initializeAnimation(): void {
@@ -115,7 +115,7 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
       start: 'top top',
       end: 'bottom bottom',
       anticipatePin: 1,
-      onUpdate: (self) => {
+      onUpdate: (self: any) => {
         const progress = self.progress;
         const frameNum = Math.ceil(progress * (this.totalFrames - 1)) + 1;
         this.currentFrameIndex = frameNum;
@@ -169,7 +169,7 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.scrollTrigger) {
       this.scrollTrigger.kill();
     }
-    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    ScrollTrigger.getAll().forEach((trigger: any) => trigger.kill());
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
     }
