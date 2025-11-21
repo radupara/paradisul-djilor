@@ -56,7 +56,7 @@ app-hero-background {
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 50%;
+  min-width: 0;
 }
 
 .logo-card {
