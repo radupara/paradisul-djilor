@@ -17,7 +17,7 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('zoomScrollSection') zoomScrollSection!: ElementRef<HTMLDivElement>;
 
   currentFrameIndex: number = 0;
-  totalFrames: number = 280;
+  totalFrames: number = 290;
   private ctx: CanvasRenderingContext2D | null = null;
   private imageCache: Map<number, HTMLImageElement> = new Map();
   private scrollTrigger: any;
