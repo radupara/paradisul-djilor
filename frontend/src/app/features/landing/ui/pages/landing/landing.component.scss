@@ -35,10 +35,20 @@
     border-radius: 8px;
     background: #f9f9f9;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform, box-shadow;
 
     &:hover {
       transform: translateY(-5px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+
+      &:hover {
+        transform: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
     }
 
     h3 {
