@@ -93,7 +93,7 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private getImageUrl(frameNum: number): string {
     const paddedNum = String(frameNum).padStart(3, '0');
-    return `assets/images/frames/frame-${paddedNum}.png`;
+    return `assets/images/frames/frame-${paddedNum}.webp`;
   }
 
   private initializeAnimation(): void {

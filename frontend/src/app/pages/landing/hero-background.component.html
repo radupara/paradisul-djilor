@@ -1,7 +1,7 @@
 <div class="hero-background-gallery">
   <div class="gallery-grid">
     <div *ngFor="let image of images" class="gallery-item">
-      <img [src]="image.src" [alt]="'Event image ' + image.id" class="gallery-image">
+      <img [ngSrc]="image.src" [alt]="'Event image ' + image.id" class="gallery-image" priority fill>
     </div>
   </div>
   <div class="gallery-overlay"></div>

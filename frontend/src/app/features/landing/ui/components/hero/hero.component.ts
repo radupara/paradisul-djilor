@@ -6,10 +6,12 @@ import { BlurTextComponent } from '../../../../../shared/ui/components/blur-text
 import { Subject, interval } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { NgOptimizedImage } from '@angular/common';
+
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, TranslateModule, HeroBackgroundComponent, BlurTextComponent],
+  imports: [CommonModule, TranslateModule, HeroBackgroundComponent, BlurTextComponent, NgOptimizedImage],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.scss']
 })
