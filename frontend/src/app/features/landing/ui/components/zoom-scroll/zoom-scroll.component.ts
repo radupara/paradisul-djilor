@@ -21,14 +21,12 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
   private ctx: CanvasRenderingContext2D | null = null;
   private imageCache: Map<number, HTMLImageElement> = new Map();
   private scrollTrigger: any;
-  private preloadingQueue: Set<number> = new Set();
-  private loadedFrames: Set<number> = new Set();
-  private preloadWindow: number = 10;
+  private preloadedFrames: Set<number> = new Set();
 
   constructor() { }
 
   ngOnInit(): void {
-    this.preloadInitialFrames();
+    this.preloadAllFrames();
   }
 
   ngAfterViewInit(): void {
@@ -38,8 +36,8 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 100);
   }
 
-  private preloadInitialFrames(): void {
-    for (let i = 1; i <= Math.min(this.preloadWindow * 2, this.totalFrames); i++) {
+  private preloadAllFrames(): void {
+    for (let i = 1; i <= this.totalFrames; i++) {
       this.preloadFrame(i);
     }
   }
@@ -53,7 +51,12 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
       if (rect) {
         canvas.width = rect.width;
         canvas.height = rect.height;
-        this.loadAndDrawFirstFrame();
+        const frame1 = this.imageCache.get(1);
+        if (frame1 && frame1.complete && frame1.naturalWidth > 0) {
+          this.drawFrame(1);
+        } else {
+          this.loadAndDrawFirstFrame();
+        }
       }
     };
 
@@ -67,7 +70,6 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
     img.src = url;
     img.onload = () => {
       this.imageCache.set(1, img);
-      this.loadedFrames.add(1);
       this.drawFrame(1);
     };
   }
@@ -75,21 +77,17 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
   private preloadFrame(frameNum: number): void {
     const validFrameNum = Math.max(1, Math.min(frameNum, this.totalFrames));
 
-    if (this.loadedFrames.has(validFrameNum) || this.preloadingQueue.has(validFrameNum)) {
-      return;
-    }
+    if (this.preloadedFrames.has(validFrameNum)) return;
 
-    this.preloadingQueue.add(validFrameNum);
     const img = new Image();
     const url = this.getImageUrl(validFrameNum);
     img.src = url;
     img.onload = () => {
       this.imageCache.set(validFrameNum, img);
-      this.loadedFrames.add(validFrameNum);
-      this.preloadingQueue.delete(validFrameNum);
+      this.preloadedFrames.add(validFrameNum);
     };
     img.onerror = () => {
-      this.preloadingQueue.delete(validFrameNum);
+      console.error(`Failed to preload frame ${validFrameNum}`);
     };
   }
 
@@ -111,21 +109,9 @@ export class ZoomScrollComponent implements OnInit, AfterViewInit, OnDestroy {
         const frameNum = Math.ceil(progress * (this.totalFrames - 1)) + 1;
         this.currentFrameIndex = frameNum;
 
-        this.updateFramePreloading(frameNum);
         this.drawFrame(frameNum);
       }
     });
-  }
-
-  private updateFramePreloading(currentFrame: number): void {
-    const startFrame = Math.max(1, currentFrame - this.preloadWindow);
-    const endFrame = Math.min(this.totalFrames, currentFrame + this.preloadWindow);
-
-    for (let i = startFrame; i <= endFrame; i++) {
-      if (!this.loadedFrames.has(i) && !this.preloadingQueue.has(i)) {
-        this.preloadFrame(i);
-      }
-    }
   }
 
   private drawFrame(frameNum: number): void {
