@@ -65,3 +65,9 @@
     transform: translateX(-50%);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-grid {
+    animation: none;
+  }
+}
