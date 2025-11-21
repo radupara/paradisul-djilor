@@ -149,6 +149,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 1rem;
+  will-change: transform, box-shadow;
 
   &.btn-primary {
     background: white;
@@ -168,6 +169,16 @@
 
     &:hover {
       background: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    will-change: auto;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
     }
   }
 }
