@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface BackgroundImage {
   id: number;
   src: string;
+  loaded?: boolean;
 }
 
 @Component({
@@ -13,13 +14,15 @@ interface BackgroundImage {
   templateUrl: './hero-background.component.html',
   styleUrl: './hero-background.component.scss'
 })
-export class HeroBackgroundComponent implements OnInit {
+export class HeroBackgroundComponent implements OnInit, OnDestroy {
   images: BackgroundImage[] = [];
   galleryImages: BackgroundImage[] = [];
+  private intersectionObserver: IntersectionObserver | null = null;
 
   ngOnInit(): void {
     this.initializeGalleryImages();
     this.generateBackgroundGallery();
+    this.setupIntersectionObserver();
   }
 
   private initializeGalleryImages(): void {
@@ -42,8 +45,8 @@ export class HeroBackgroundComponent implements OnInit {
   }
 
   private generateBackgroundGallery(): void {
-    const columnCount = 10; // Increased to match SCSS
-    const rowCount = 5; // Increased to match SCSS
+    const columnCount = 8;
+    const rowCount = 4;
     const totalTiles = columnCount * rowCount;
     this.images = [];
 
@@ -51,8 +54,46 @@ export class HeroBackgroundComponent implements OnInit {
       const randomIndex = Math.floor(Math.random() * this.galleryImages.length);
       this.images.push({
         id: i,
-        src: this.galleryImages[randomIndex].src
+        src: this.galleryImages[randomIndex].src,
+        loaded: false
       });
+    }
+  }
+
+  private setupIntersectionObserver(): void {
+    const options = {
+      root: null,
+      rootMargin: '50px',
+      threshold: 0.01
+    };
+
+    this.intersectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const img = entry.target as HTMLImageElement;
+          const imageId = parseInt(img.getAttribute('data-id') || '0', 10);
+          const imageIndex = this.images.findIndex(img => img.id === imageId);
+          
+          if (imageIndex !== -1 && !this.images[imageIndex].loaded) {
+            this.images[imageIndex].loaded = true;
+            img.src = this.images[imageIndex].src;
+            this.intersectionObserver?.unobserve(entry.target);
+          }
+        }
+      });
+    }, options);
+  }
+
+  onImageInit(img: HTMLImageElement, imageId: number): void {
+    img.setAttribute('data-id', imageId.toString());
+    if (this.intersectionObserver) {
+      this.intersectionObserver.observe(img);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
     }
   }
 }
