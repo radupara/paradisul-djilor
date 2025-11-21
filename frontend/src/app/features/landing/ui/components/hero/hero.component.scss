@@ -48,7 +48,7 @@ app-hero-background {
   align-items: center;
   justify-content: center;
   gap: 2rem;
-  max-width: 60%;
+  min-width: 0;
 }
 
 .hero-image-content {
