@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface BackgroundImage {
   id: number;
   src: string;
-  loaded?: boolean;
+  displaySrc?: string;
 }
 
 @Component({
@@ -14,15 +14,19 @@ interface BackgroundImage {
   templateUrl: './hero-background.component.html',
   styleUrl: './hero-background.component.scss'
 })
-export class HeroBackgroundComponent implements OnInit, OnDestroy {
+export class HeroBackgroundComponent implements OnInit, AfterViewInit, OnDestroy {
   images: BackgroundImage[] = [];
   galleryImages: BackgroundImage[] = [];
+  @ViewChild('galleryGrid') galleryGrid!: ElementRef<HTMLDivElement>;
   private intersectionObserver: IntersectionObserver | null = null;
 
   ngOnInit(): void {
     this.initializeGalleryImages();
     this.generateBackgroundGallery();
-    this.setupIntersectionObserver();
+  }
+
+  ngAfterViewInit(): void {
+    this.setupLazyLoading();
   }
 
   private initializeGalleryImages(): void {
@@ -55,15 +59,17 @@ export class HeroBackgroundComponent implements OnInit, OnDestroy {
       this.images.push({
         id: i,
         src: this.galleryImages[randomIndex].src,
-        loaded: false
+        displaySrc: undefined
       });
     }
   }
 
-  private setupIntersectionObserver(): void {
+  private setupLazyLoading(): void {
+    if (!this.galleryGrid) return;
+
     const options = {
       root: null,
-      rootMargin: '50px',
+      rootMargin: '100px',
       threshold: 0.01
     };
 
@@ -71,24 +77,19 @@ export class HeroBackgroundComponent implements OnInit, OnDestroy {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const img = entry.target as HTMLImageElement;
-          const imageId = parseInt(img.getAttribute('data-id') || '0', 10);
-          const imageIndex = this.images.findIndex(img => img.id === imageId);
-          
-          if (imageIndex !== -1 && !this.images[imageIndex].loaded) {
-            this.images[imageIndex].loaded = true;
-            img.src = this.images[imageIndex].src;
+          const src = img.getAttribute('data-src');
+          if (src && !img.src) {
+            img.src = src;
             this.intersectionObserver?.unobserve(entry.target);
           }
         }
       });
     }, options);
-  }
 
-  onImageInit(img: HTMLImageElement, imageId: number): void {
-    img.setAttribute('data-id', imageId.toString());
-    if (this.intersectionObserver) {
-      this.intersectionObserver.observe(img);
-    }
+    const images = this.galleryGrid.nativeElement.querySelectorAll('img.gallery-image');
+    images.forEach((img: HTMLImageElement) => {
+      this.intersectionObserver?.observe(img);
+    });
   }
 
   ngOnDestroy(): void {
