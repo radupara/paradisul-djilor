@@ -29,6 +29,7 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
     ngAfterViewInit(): void {
         const player = this.audioPlayerRef.nativeElement;
         player.volume = 0; // Start at 0 for fade-in
+        player.preload = 'auto'; // Preload the audio
 
         // We use NgZone to run outside Angular to avoid triggering change detection on every event
         this.ngZone.runOutsideAngular(() => {
@@ -37,8 +38,33 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
             // Use capture: true to ensure we catch the event even if propagation is stopped
             // We don't use 'once: true' because if the first attempt fails (e.g. browser blocks it),
             // we want to keep trying on subsequent events until it succeeds.
-            ['click', 'touchstart', 'keydown', 'mousedown', 'pointerdown', 'pointermove', 'wheel', 'scroll', 'touchmove', 'focus'].forEach(event => {
-                window.addEventListener(event, this.interactionListener!, { capture: true });
+            // Priority order: wheel (mouse scroll) is most reliable for Chrome autoplay policy,
+            // then other direct interactions, then scroll events
+            // Note: 'wheel' events are more reliable than 'scroll' for Chrome's autoplay policy
+            const events = [
+                'wheel',           // Mouse wheel - most reliable for scroll-triggered autoplay
+                'click', 
+                'touchstart', 
+                'keydown', 
+                'mousedown', 
+                'pointerdown', 
+                'pointermove', 
+                'scroll',          // Fallback for scroll events
+                'touchmove', 
+                'focus'
+            ];
+            // Add listeners to both window and document for better coverage
+            const targets = [window, document, document.body].filter(Boolean);
+            events.forEach(event => {
+                // For wheel events, use non-passive listeners to maintain user gesture context in Chrome
+                // Other events can be passive for better performance
+                const isWheelEvent = event === 'wheel';
+                targets.forEach(target => {
+                    target.addEventListener(event, this.interactionListener!, { 
+                        capture: true, 
+                        passive: !isWheelEvent 
+                    });
+                });
             });
         });
     }
@@ -56,10 +82,17 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.isPlaying) {
             player.pause();
             this.isPlaying = false;
+            this.isAttemptingPlay = false; // Reset flag when manually paused
             // If paused during fade, we might want to stop fading or just leave it. 
             // For simplicity, we stop fading if they manually pause.
             if (this.fadeInterval) clearInterval(this.fadeInterval);
         } else {
+            // When manually playing, ensure volume is set correctly
+            // If it's already started before, we might need to reset volume for fade-in
+            if (player.volume === 0 && this.hasStarted) {
+                // Reset volume to 0 to restart fade-in
+                player.volume = 0;
+            }
             this.startPlayback(player);
         }
     }
@@ -72,8 +105,6 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
     private tryAutoPlay(event: Event): void {
         if (this.hasStarted || this.isAttemptingPlay) return;
 
-        // console.log('Interaction detected:', event.type);
-
         // If the interaction is on the play button, let the button's own handler manage it
         // to avoid race conditions or double-toggles.
         const target = event.target as HTMLElement;
@@ -82,9 +113,78 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
         const player = this.audioPlayerRef.nativeElement;
-        this.startPlayback(player).catch((err) => {
-            // console.log('Autoplay blocked on ' + event.type, err);
-        });
+        const eventType = event.type;
+        
+        // Ensure volume is at 0 for fade-in
+        if (player.volume > 0) {
+            player.volume = 0;
+        }
+        
+        // For wheel and scroll events, Chrome requires play() to be called synchronously
+        // within the event handler to maintain the user gesture context
+        const isScrollEvent = eventType === 'wheel' || eventType === 'scroll';
+        
+        // Ensure audio is loaded and ready before attempting to play
+        if (player.readyState < 2) {
+            // If not loaded enough, wait for canplay event
+            const canPlayHandler = () => {
+                player.removeEventListener('canplay', canPlayHandler);
+                if (isScrollEvent) {
+                    // For scroll events, try synchronous play first
+                    this.trySynchronousPlay(player);
+                } else {
+                    this.startPlayback(player).catch((err) => {
+                        // console.log('Autoplay blocked on ' + event.type, err);
+                        this.isAttemptingPlay = false; // Reset flag on failure
+                    });
+                }
+            };
+            player.addEventListener('canplay', canPlayHandler);
+            player.load(); // Trigger loading if not already started
+        } else {
+            if (isScrollEvent) {
+                // For scroll events, try synchronous play to maintain user gesture context
+                this.trySynchronousPlay(player);
+            } else {
+                this.startPlayback(player).catch((err) => {
+                    // console.log('Autoplay blocked on ' + event.type, err);
+                    this.isAttemptingPlay = false; // Reset flag on failure
+                });
+            }
+        }
+    }
+
+    private trySynchronousPlay(player: HTMLAudioElement): void {
+        if (this.isAttemptingPlay) return;
+        this.isAttemptingPlay = true;
+
+        // Try to play synchronously to maintain user gesture context for Chrome
+        // This is important for scroll/wheel events
+        const playPromise = player.play();
+        
+        if (playPromise !== undefined) {
+            playPromise
+                .then(() => {
+                    // Playback started successfully
+                    this.ngZone.run(() => {
+                        this.isPlaying = true;
+                        this.hasStarted = true;
+                    });
+                    this.removeListeners();
+                    this.startFadeIn(player);
+                })
+                .catch((error) => {
+                    // Playback was blocked
+                    this.isAttemptingPlay = false;
+                    // console.log('Autoplay blocked:', error);
+                });
+        } else {
+            // Fallback for older browsers
+            this.isAttemptingPlay = false;
+            this.startPlayback(player).catch((err) => {
+                this.isAttemptingPlay = false;
+            });
+        }
     }
 
     private async startPlayback(player: HTMLAudioElement): Promise<void> {
@@ -92,12 +192,8 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.isAttemptingPlay = true;
 
         try {
-            // console.log('Attempting playback...');
-
-            // Try playing muted first to satisfy some autoplay policies
-            // player.muted = true; 
-            // Actually, let's just try normal play first. Muted autoplay usually requires a click to unmute anyway.
-            // But we can try to set volume to 0 (which we did) and play.
+            // Ensure volume starts at 0 for fade-in (important for Firefox)
+            player.volume = 0;
 
             await player.play();
             // console.log('Playback started successfully');
@@ -108,6 +204,7 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
             });
 
             this.removeListeners();
+            // Start fade-in immediately after successful play
             this.startFadeIn(player);
 
         } catch (error) {
@@ -116,16 +213,28 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
     }
     private startFadeIn(player: HTMLAudioElement): void {
+        // Clear any existing fade interval
+        if (this.fadeInterval) {
+            clearInterval(this.fadeInterval);
+        }
+
         // If already at target volume, do nothing
-        if (player.volume >= this.TARGET_VOLUME) return;
+        if (player.volume >= this.TARGET_VOLUME) {
+            player.volume = this.TARGET_VOLUME;
+            return;
+        }
+
+        // Ensure we start from 0
+        player.volume = 0;
 
         const stepTime = this.FADE_DURATION / this.FADE_STEPS;
         const volumeStep = this.TARGET_VOLUME / this.FADE_STEPS;
 
         this.ngZone.runOutsideAngular(() => {
             this.fadeInterval = setInterval(() => {
-                if (!this.isPlaying) {
+                if (!this.isPlaying || player.paused) {
                     clearInterval(this.fadeInterval);
+                    this.fadeInterval = null;
                     return;
                 }
 
@@ -134,6 +243,7 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
 
                 if (newVolume >= this.TARGET_VOLUME) {
                     clearInterval(this.fadeInterval);
+                    this.fadeInterval = null;
                 }
             }, stepTime);
         });
@@ -141,8 +251,16 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     private removeListeners(): void {
         if (this.interactionListener) {
-            ['click', 'touchstart', 'keydown', 'mousedown', 'pointerdown', 'wheel', 'scroll', 'touchmove', 'focus'].forEach(event => {
-                window.removeEventListener(event, this.interactionListener!, { capture: true });
+            const events = [
+                'wheel', 'click', 'touchstart', 'keydown', 'mousedown', 
+                'pointerdown', 'pointermove', 'scroll', 'touchmove', 'focus'
+            ];
+            // Remove listeners from all targets
+            const targets = [window, document, document.body].filter(Boolean);
+            events.forEach(event => {
+                targets.forEach(target => {
+                    target.removeEventListener(event, this.interactionListener!, { capture: true });
+                });
             });
             this.interactionListener = null;
         }
