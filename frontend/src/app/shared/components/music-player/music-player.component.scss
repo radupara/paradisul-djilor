@@ -5,6 +5,16 @@
   z-index: 9999;
   font-family: 'Outfit', sans-serif;
 
+  // Hide the video element completely - we only use it for audio playback
+  video {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
   .player-btn {
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(10px);

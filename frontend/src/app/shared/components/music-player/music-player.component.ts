@@ -9,11 +9,12 @@ import { CommonModule } from '@angular/common';
     styleUrls: ['./music-player.component.scss']
 })
 export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
-    @ViewChild('audioPlayer') audioPlayerRef!: ElementRef<HTMLAudioElement>;
+    @ViewChild('videoPlayer') videoPlayerRef!: ElementRef<HTMLVideoElement>;
 
     isPlaying = false;
     hasStarted = false;
-    audioSource = 'assets/audio/background-music.mp3';
+    isMuted = true; // Start muted for autoplay compatibility
+    videoSource = 'assets/audio/background-music.mp4'; // Changed to MP4
 
     private interactionListener: ((event: Event) => void) | null = null;
     private fadeInterval: any = null;
@@ -27,24 +28,27 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
     ngOnInit(): void { }
 
     ngAfterViewInit(): void {
-        const player = this.audioPlayerRef.nativeElement;
+        const player = this.videoPlayerRef.nativeElement;
         player.volume = 0; // Start at 0 for fade-in
-        player.preload = 'auto'; // Preload the audio
+        player.muted = true; // Start muted to allow autoplay (Safari/Chrome requirement)
+        player.preload = 'auto'; // Preload the video
+        this.isMuted = true;
+
+        // Try muted autoplay first (this is more likely to work)
+        this.tryMutedAutoplay(player);
 
         // We use NgZone to run outside Angular to avoid triggering change detection on every event
         this.ngZone.runOutsideAngular(() => {
             this.interactionListener = this.tryAutoPlay.bind(this);
             // Listen to multiple events to catch the first user interaction
             // Use capture: true to ensure we catch the event even if propagation is stopped
-            // We don't use 'once: true' because if the first attempt fails (e.g. browser blocks it),
-            // we want to keep trying on subsequent events until it succeeds.
             // Priority order: wheel (mouse scroll) is most reliable for Chrome autoplay policy,
             // then other direct interactions, then scroll events
             // Note: 'wheel' events are more reliable than 'scroll' for Chrome's autoplay policy
             const events = [
                 'wheel',           // Mouse wheel - most reliable for scroll-triggered autoplay
                 'click', 
-                'touchstart', 
+                'touchstart',      // Important for Safari iOS
                 'keydown', 
                 'mousedown', 
                 'pointerdown', 
@@ -69,6 +73,23 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     }
 
+    private tryMutedAutoplay(player: HTMLVideoElement): void {
+        // Try to start playing muted immediately (this is allowed by browsers)
+        player.play()
+            .then(() => {
+                // Successfully started playing muted
+                this.ngZone.run(() => {
+                    this.isPlaying = true;
+                    this.hasStarted = true;
+                });
+                // Don't remove listeners yet - we need to wait for scroll to unmute
+            })
+            .catch((error) => {
+                // Muted autoplay was blocked - will wait for user interaction
+                // console.log('Muted autoplay blocked, waiting for user interaction:', error);
+            });
+    }
+
     ngOnDestroy(): void {
         this.removeListeners();
         if (this.fadeInterval) {
@@ -77,7 +98,7 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     togglePlay(): void {
-        const player = this.audioPlayerRef.nativeElement;
+        const player = this.videoPlayerRef.nativeElement;
 
         if (this.isPlaying) {
             player.pause();
@@ -87,7 +108,11 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
             // For simplicity, we stop fading if they manually pause.
             if (this.fadeInterval) clearInterval(this.fadeInterval);
         } else {
-            // When manually playing, ensure volume is set correctly
+            // When manually playing, unmute and ensure volume is set correctly
+            if (this.isMuted) {
+                player.muted = false;
+                this.isMuted = false;
+            }
             // If it's already started before, we might need to reset volume for fade-in
             if (player.volume === 0 && this.hasStarted) {
                 // Reset volume to 0 to restart fade-in
@@ -103,7 +128,10 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     private tryAutoPlay(event: Event): void {
-        if (this.hasStarted || this.isAttemptingPlay) return;
+        // If already playing and unmuted, no need to do anything
+        if (this.hasStarted && !this.isMuted && this.isPlaying) return;
+        
+        if (this.isAttemptingPlay) return;
 
         // If the interaction is on the play button, let the button's own handler manage it
         // to avoid race conditions or double-toggles.
@@ -112,8 +140,14 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
             return;
         }
 
-        const player = this.audioPlayerRef.nativeElement;
+        const player = this.videoPlayerRef.nativeElement;
         const eventType = event.type;
+        
+        // If video is already playing but muted, unmute it on scroll/interaction
+        if (this.isPlaying && this.isMuted) {
+            this.unmuteAndFadeIn(player);
+            return;
+        }
         
         // Ensure volume is at 0 for fade-in
         if (player.volume > 0) {
@@ -124,7 +158,7 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
         // within the event handler to maintain the user gesture context
         const isScrollEvent = eventType === 'wheel' || eventType === 'scroll';
         
-        // Ensure audio is loaded and ready before attempting to play
+        // Ensure video is loaded and ready before attempting to play
         if (player.readyState < 2) {
             // If not loaded enough, wait for canplay event
             const canPlayHandler = () => {
@@ -154,9 +188,35 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
     }
 
-    private trySynchronousPlay(player: HTMLAudioElement): void {
+    private unmuteAndFadeIn(player: HTMLVideoElement): void {
+        // Unmute the video
+        player.muted = false;
+        this.isMuted = false;
+        
+        // Ensure volume starts at 0 for fade-in
+        player.volume = 0;
+        
+        // Start fade-in
+        this.startFadeIn(player);
+        
+        // Remove listeners since we've successfully started
+        this.removeListeners();
+    }
+
+    private trySynchronousPlay(player: HTMLVideoElement): void {
         if (this.isAttemptingPlay) return;
         this.isAttemptingPlay = true;
+
+        // If already playing but muted, just unmute
+        if (this.isPlaying && this.isMuted) {
+            this.unmuteAndFadeIn(player);
+            this.isAttemptingPlay = false;
+            return;
+        }
+
+        // Unmute before playing (user gesture allows this)
+        player.muted = false;
+        this.isMuted = false;
 
         // Try to play synchronously to maintain user gesture context for Chrome
         // This is important for scroll/wheel events
@@ -174,9 +234,20 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
                     this.startFadeIn(player);
                 })
                 .catch((error) => {
-                    // Playback was blocked
-                    this.isAttemptingPlay = false;
-                    // console.log('Autoplay blocked:', error);
+                    // Playback was blocked - try muted play as fallback
+                    player.muted = true;
+                    this.isMuted = true;
+                    player.play()
+                        .then(() => {
+                            this.ngZone.run(() => {
+                                this.isPlaying = true;
+                                this.hasStarted = true;
+                            });
+                            // Will unmute on next interaction
+                        })
+                        .catch(() => {
+                            this.isAttemptingPlay = false;
+                        });
                 });
         } else {
             // Fallback for older browsers
@@ -187,11 +258,15 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
     }
 
-    private async startPlayback(player: HTMLAudioElement): Promise<void> {
+    private async startPlayback(player: HTMLVideoElement): Promise<void> {
         if (this.isAttemptingPlay) return;
         this.isAttemptingPlay = true;
 
         try {
+            // Unmute before playing (user gesture allows this)
+            player.muted = false;
+            this.isMuted = false;
+            
             // Ensure volume starts at 0 for fade-in (important for Firefox)
             player.volume = 0;
 
@@ -208,11 +283,23 @@ export class MusicPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
             this.startFadeIn(player);
 
         } catch (error) {
-            this.isAttemptingPlay = false;
-            throw error;
+            // If unmuted play fails, try muted play as fallback
+            try {
+                player.muted = true;
+                this.isMuted = true;
+                await player.play();
+                this.ngZone.run(() => {
+                    this.isPlaying = true;
+                    this.hasStarted = true;
+                });
+                // Will unmute on next interaction
+            } catch (mutedError) {
+                this.isAttemptingPlay = false;
+                throw mutedError;
+            }
         }
     }
-    private startFadeIn(player: HTMLAudioElement): void {
+    private startFadeIn(player: HTMLVideoElement): void {
         // Clear any existing fade interval
         if (this.fadeInterval) {
             clearInterval(this.fadeInterval);

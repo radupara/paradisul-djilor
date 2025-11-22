@@ -1,5 +1,5 @@
 <div class="music-player-container" [class.playing]="isPlaying">
-    <audio #audioPlayer [src]="audioSource" (ended)="onEnded()"></audio>
+    <video #videoPlayer [src]="videoSource" (ended)="onEnded()" playsinline webkit-playsinline></video>
 
     <button class="player-btn" (click)="togglePlay()" [attr.aria-label]="isPlaying ? 'Pause Music' : 'Play Music'">
         <div class="icon-container">
